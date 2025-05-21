@@ -44,40 +44,82 @@ public:
         this->Z = NZ;
         Update();
     }
+    Vector3()
+    {
+        this->X = 0;
+        this->Y = 0;
+        this->Z = 0;
+        Update();
+    }
 };
 class CFrame{
     public:
         //Postion
-        double X;
-        double Y;
-        double Z;
+        double X,Y,Z;
         //Vector Pointer
-        pt Vectorptr = nullptr;
+        Vector3 Vector;
         //Euler Angles
         double Alpha;
         double Beta;
         double Gamma;
         // Rotation Matrix
         double RotationMatrix[3][3];
-
-
-        //Constructor
-        CFrame(double NX,double NY,double NZ){
+        //Deafult Constructor
+        CFrame(){
+            this->Vector = Vector3(X,Y,Z);
+        }
+        //Constructor without angles
+        CFrame(double NX,double NY,double NZ,double){
             this->X = NX;
             this->Y = NY;
             this->Z = NZ;
-            Update();
+
+            this->Vector = Vector3(X,Y,Z);
         }
-        void Update(){
+        //Constructor with Angles
+        CFrame(double NX,double NY,double NZ,double Alpha,double Beta,double Gamma){
+            this->X = NX;
+            this->Y = NY;
+            this->Z = NZ;
 
-            Vector3* Vectorptr = new Vector3(X,Y,Z);
-            
+            this->Alpha = Alpha;
+            this->Beta = Beta;
+            this->Gamma = Gamma;
+            this->Vector = Vector3(X,Y,Z);
         }
+        //Constructor using a vector3
+        CFrame(Vector3 Vector){
+            SetPos(Vector);
+            this->Vector = Vector;
+        }
+        //Sets Postion Using a vector
+        void SetPos(Vector3 Vector){
+            this->X = Vector.X;
+            this->Y = Vector.Y;
+            this->Z = Vector.Z;
+        }
+        //Adds Vector to CFrame (non directional)
+        void AddPos(Vector3 Vector){
+            this->Vector.Add(Vector);
+            SetPos(this->Vector);
+        }
+        //Turns the euler angles stored into a rotation matrix set in the Za Xb Yg formation
 
+        void UpdateMatrix(){
+            double ca = cos(Alpha), sa = sin(Alpha);
+            double cb = cos(Beta), sb = sin(Beta);
+            double cy = cos(Gamma), sy = sin(Gamma);
 
-
-
-        
+            double Temp[3][3] = {
+                {ca*cy-sa*sb*sy,-cb*sa,ca*sy+cy*sa*sb},
+                {cy*sa+ca*sb*sy,ca*cb,sa*sy-ca*cy*sb},
+                {-cb*sy,sb,cb*cy}
+            };
+            std::copy(&Temp[0][0], &Temp[0][0] + 9, &this->RotationMatrix[0][0]);
+        }
+        void UpdateEuler(){
+            //this->Alpha = atan();
+        }
 };
 
 
@@ -85,11 +127,12 @@ class CFrame{
 
 #include <iostream>
 
-int main(int argc, char const *argv[])
+int main()
 {
     Vector3 Car(15, 165, 21);
     Car.Add(Vector3(10,10,10));
-    CFrame Test(12452,125,21512);
-    printf("%f", Test.Vectorptr);
+    CFrame Testaaa;
+    Testaaa.UpdateMatrix();
+    printf("%f",Testaaa.RotationMatrix[1][1]);
     return 0;
 }
