@@ -56,7 +56,7 @@ class CFrame{
     public:
         //Postion
         double X,Y,Z;
-        //Vector Pointer
+        //Vector Reference
         Vector3 Vector;
         //Euler Angles
         double Alpha;
@@ -104,7 +104,6 @@ class CFrame{
             SetPos(this->Vector);
         }
         //Turns the euler angles stored into a rotation matrix set in the Za Xb Yg formation
-
         void UpdateMatrix(){
             double ca = cos(Alpha), sa = sin(Alpha);
             double cb = cos(Beta), sb = sin(Beta);
@@ -117,8 +116,11 @@ class CFrame{
             };
             std::copy(&Temp[0][0], &Temp[0][0] + 9, &this->RotationMatrix[0][0]);
         }
+        //turns matrix into euler angles
         void UpdateEuler(){
-            //this->Alpha = atan();
+            this->Alpha = atan(-RotationMatrix[0][1]/RotationMatrix[1][1]);
+            this->Beta = asin(RotationMatrix[2][1]);
+            this->Gamma = atan(-RotationMatrix[2][0]/RotationMatrix[2][2]);
         }
 };
 
