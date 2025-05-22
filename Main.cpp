@@ -56,7 +56,7 @@ class CFrame{
     public:
         //Postion
         double X,Y,Z;
-        //Vector Reference
+        //Vector 
         Vector3 Vector;
         //Euler Angles
         double Alpha;
@@ -66,15 +66,15 @@ class CFrame{
         double RotationMatrix[3][3];
         //Deafult Constructor
         CFrame(){
-            this->Vector = Vector3(X,Y,Z);
+            UpdateAll();
         }
         //Constructor without angles
-        CFrame(double NX,double NY,double NZ,double){
+        CFrame(double NX,double NY,double NZ){
             this->X = NX;
             this->Y = NY;
             this->Z = NZ;
 
-            this->Vector = Vector3(X,Y,Z);
+            UpdateAll();
         }
         //Constructor with Angles
         CFrame(double NX,double NY,double NZ,double Alpha,double Beta,double Gamma){
@@ -85,23 +85,24 @@ class CFrame{
             this->Alpha = Alpha;
             this->Beta = Beta;
             this->Gamma = Gamma;
-            this->Vector = Vector3(X,Y,Z);
+            UpdateAll();
         }
         //Constructor using a vector3
         CFrame(Vector3 Vector){
             SetPos(Vector);
-            this->Vector = Vector;
+            UpdateAll();
         }
         //Sets Postion Using a vector
         void SetPos(Vector3 Vector){
             this->X = Vector.X;
             this->Y = Vector.Y;
             this->Z = Vector.Z;
+            UpdatePostition();
         }
         //Adds Vector to CFrame (non directional)
         void AddPos(Vector3 Vector){
             this->Vector.Add(Vector);
-            SetPos(this->Vector);
+            UpdatePostition();
         }
         //Turns the euler angles stored into a rotation matrix set in the Za Xb Yg formation
         void UpdateMatrix(){
@@ -122,19 +123,61 @@ class CFrame{
             this->Beta = asin(RotationMatrix[2][1]);
             this->Gamma = atan(-RotationMatrix[2][0]/RotationMatrix[2][2]);
         }
+        //Updates All Values 
+        void UpdateAll(){
+            UpdateRotation();
+            UpdatePostition();
+        }
+        //Updates Only Position Related ELements
+        void UpdatePostition(){
+            this->Vector = Vector3(X,Y,Z);
+        }
+        //Updates Only Rotation Related ELements
+        void UpdateRotation(){
+            UpdateMatrix();
+            UpdateEuler();
+        }
+};
+
+class Color3{
+    public:
+        int RGB[3];
+
+        int Red;
+        int Green;
+        int Blue;
+
+        Color3(){}
+        Color3(int R,int G,int B){
+            RGB[0] = R;
+            RGB[1] = G;
+            RGB[2] = B;
+        }
+};
+
+class Object{
+    public:
+        char Name[100]; //Max 99 characters due to the null at the end of a char array
+        float Transparency; //Range 1-0
+        Color3 Color;
+        Vector3 Size;
+        CFrame Position;
+
+        
+
+
 };
 
 
 
-
 #include <iostream>
-
 int main()
 {
     Vector3 Car(15, 165, 21);
     Car.Add(Vector3(10,10,10));
-    CFrame Testaaa;
+    CFrame Testaaa(1,1,1,42.5,191.5,247.7);
     Testaaa.UpdateMatrix();
     printf("%f",Testaaa.RotationMatrix[1][1]);
+    printf("\n%f",Testaaa.Alpha);
     return 0;
 }
