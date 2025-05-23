@@ -162,10 +162,6 @@ class Object{
         Color3 Color;
         Vector3 Size;
         CFrame Position;
-
-        
-
-
 };
 
 
